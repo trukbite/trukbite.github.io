@@ -26,7 +26,7 @@
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body { margin: 0; background: var(--cream); color: var(--charcoal); font: 17px/1.55 var(--body); }
-  img, video { max-width: 100%; display: block; }
+  img, video { max-width: 100%; height: auto; display: block; }
   a { color: inherit; }
   .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 20px; }
   h1, h2, h3 { font-family: var(--display); line-height: 1.12; margin: 0; text-wrap: balance; }
@@ -108,6 +108,18 @@
   .offer h3 { color: var(--mustard); }
   .offer p { color: #E6E2DC; }
   @media (max-width: 860px) { .owners .grid { grid-template-columns: 1fr; } }
+
+  /* features */
+  .features { background: var(--sand); }
+  .feats { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 40px; }
+  .feat { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: grid; gap: 8px; align-content: start; }
+  .feat.pro { border: 2px solid var(--flame); }
+  .feat h3 { font-size: 18px; }
+  .feat p { color: var(--soft); font-size: 15px; }
+  .tag.free { background: var(--sand); }
+  .start { margin-top: 36px; background: #fff; border-radius: 22px; padding: 28px; display: grid; gap: 14px; max-width: 720px; margin-left: auto; margin-right: auto; }
+  .start ol { margin: 0; padding-left: 22px; display: grid; gap: 8px; color: var(--soft); }
+  .start strong { color: var(--charcoal); }
   @media (max-width: 520px) { .plans { grid-template-columns: 1fr; } }
 
   /* founder */
@@ -257,6 +269,53 @@
     </div>
   </section>
 
+  <section id="features" class="features">
+    <div class="wrap">
+      <div class="center">
+        <span class="eyebrow">Everything your truck gets</span>
+        <h2 style="margin-top: 10px;">Built for how trucks really run.</h2>
+        <p class="lede">Most of it is free. Pro adds the tools that bring in more customers.</p>
+      </div>
+      <div class="feats">
+        <div class="feat"><span class="tag free">FREE</span><h3>One-tap Open here</h3>
+          <p>Tap once when you park and you're on the map. Pick a closing time and we close you automatically, with a "Still open?" check 15 minutes before. Short break, Opening soon and Sold out statuses too.</p></div>
+        <div class="feat"><span class="tag free">FREE</span><h3>Alerts to your followers</h3>
+          <p>Everyone who follows you gets "just pulled up" the moment you open, plus a heads-up when you move or cancel a stop.</p></div>
+        <div class="feat"><span class="tag free">FREE</span><h3>Your full menu</h3>
+          <p>Categories, prices and tags like Vegetarian or Spicy. Flip a dish to Sold out in a second, and it resets on its own when you close. Photos on 3 dishes.</p></div>
+        <div class="feat"><span class="tag free">FREE</span><h3>Dish ratings and reviews</h3>
+          <p>Customers rate each dish, and your best one gets a Top dish badge. Reply to every review in public.</p></div>
+        <div class="feat"><span class="tag free">FREE</span><h3>Weekly schedule</h3>
+          <p>Add stops for any time, repeat them every week, reuse saved spots, or copy last week in one tap. Customers see where you'll be.</p></div>
+        <div class="feat"><span class="tag free">FREE</span><h3>Truck profile</h3>
+          <p>Cover photo, logo, up to 6 photos, cuisines, price level, and your phone, Instagram, Facebook and catering links.</p></div>
+        <div class="feat"><span class="tag free">FREE</span><h3>Manage from your computer</h3>
+          <p>Edit your menu, schedule and profile on the Trukbite website. Opening and closing stay in the phone app, where we can see you're there.</p></div>
+        <div class="feat"><span class="tag free">FREE</span><h3>Verified trucks only</h3>
+          <p>We check every truck's permit by hand, so customers know the trucks on Trukbite are real.</p></div>
+        <div class="feat pro"><span class="tag">PRO</span><h3>Your stats</h3>
+          <p>New followers, profile views, direction taps and alert opens over 7, 30 or 90 days, plus your best spots and top dish.</p></div>
+        <div class="feat pro"><span class="tag">PRO</span><h3>Specials</h3>
+          <p>Post a deal or announcement once a day. It goes to all your followers and shows on your page for 24 hours.</p></div>
+        <div class="feat pro"><span class="tag">PRO</span><h3>Plan next week ahead</h3>
+          <p>Post next week's schedule early, so your regulars can plan around you.</p></div>
+        <div class="feat pro"><span class="tag">PRO</span><h3>Staff accounts and every-dish photos</h3>
+          <p>Invite your crew to run the truck from their own phones, and add photos to every dish on your menu.</p></div>
+      </div>
+
+      <div class="start">
+        <h3>Getting on Trukbite</h3>
+        <ol>
+          <li><strong>Sign in with your phone number.</strong> No passwords, just a text code.</li>
+          <li><strong>Add the basics.</strong> Your truck's name, cuisine and logo, plus a photo of your permit (only our team sees it).</li>
+          <li><strong>We approve you</strong>, usually within a day.</li>
+          <li><strong>Tap Open here</strong> the next time you park.</li>
+        </ol>
+        <div><a class="btn btn-primary js-form" href="#join">Claim a founding spot</a></div>
+      </div>
+    </div>
+  </section>
+
   <section class="founder">
     <div class="wrap grid">
       <figure>
@@ -309,7 +368,7 @@
 
 <script>
   // The waitlist Google Form. Paste the forms.gle link here; every "Join the waitlist" button uses it.
-  const FORM_URL = 'PASTE_YOUR_FORM_LINK_HERE';
+  const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScQ_4iG-bZqABSIbp7MR-Zg2ZMjoByy9kh-VnRaVbRbMi-r6Q/viewform';
   if (FORM_URL.startsWith('http')) {
     document.querySelectorAll('.js-form').forEach((a) => { a.href = FORM_URL; a.target = '_blank'; a.rel = 'noopener'; });
   }
