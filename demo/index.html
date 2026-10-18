@@ -133,6 +133,7 @@
   .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform .15s; }
   .switch[aria-checked="true"] { background: var(--mustard); }
   .switch[aria-checked="true"]::after { transform: translateX(18px); }
+  .owner select.until { width: 100%; height: 48px; border-radius: 12px; border: 1px solid #44444D; background: var(--raised); color: #fff; padding: 0 12px; font: 700 17px var(--body); }
   .owner input { width: 100%; height: 44px; border-radius: 12px; border: 1px solid #44444D; background: var(--raised); color: #fff; padding: 0 12px; font: inherit; }
   .pro { background: var(--mustard); color: var(--charcoal); font-size: 11px; font-weight: 700; letter-spacing: .06em; padding: 1px 7px; border-radius: 999px; }
   .stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -410,8 +411,19 @@
       <span style="min-width:0"><span class="name">${esc(a.title)}</span><br><span class="sub">${esc(a.body)}</span></span><span class="right">${a.when}</span></button>`).join('');
   }
 
+  // Closing times like the app's scrolling picker: every 15 min from 15 min to 16 hours after the demo time.
+  function closeOptions() {
+    const first = Math.ceil((state.time.min + 15) / 15) * 15;
+    const out = [];
+    for (let m = first; m <= state.time.min + 16 * 60; m += 15) out.push(m);
+    return out;
+  }
+  const closeLabel = (m) => (m >= 24 * 60 ? `${clock(m)} · after midnight` : clock(m));
+
   function ownerView() {
     const o = state.owner;
+    const opts = closeOptions();
+    if (!opts.includes(o.until)) o.until = opts.find((m) => m >= 21 * 60) ?? opts[opts.length - 1];
     const items = ME.menu.map((m) => `<div class="owner-row"><span>${esc(m.name)}<br><span class="note">${money(m.price)}</span></span>
       <span style="display:flex;gap:8px;align-items:center"><span class="note">Sold out</span><button class="switch" role="switch" data-sold="${m.i}" aria-checked="${o.sold.has(m.i)}" aria-label="${esc(m.name)} sold out"></button></span></div>`).join('');
     return `<div class="owner">
@@ -421,8 +433,13 @@
            <p class="note">You're on the map, and ${o.followers} followers just got "Your Truck just pulled up". We'll ask "Still open?" 15 minutes before ${clock(o.until)}, then close you automatically.</p>
            <button class="big close" data-owner="close">Close for today</button>`
         : `<p class="note">You just parked at ${esc(ME.stops[0].place)}. Pick a closing time, then tap Open here.</p>
-           <div class="seg" role="group" aria-label="Closing time">${[20, 21, 22].map((h) => `<button data-until="${h * 60}" aria-pressed="${o.until === h * 60}">${clock(h * 60)}</button>`).join('')}</div>
+           <label class="note" for="until">Open until</label>
+           <select id="until" class="until">${closeOptions().map((m) => `<option value="${m}"${m === o.until ? ' selected' : ''}>${closeLabel(m)}</option>`).join('')}</select>
            <button class="big" data-owner="open">Open here</button>`}
+      <div class="owner-row" style="align-items:flex-start">
+        <span>Your truck page<br><span class="note">trukbite.com/t/your-truck · menu, schedule and where you are, for your Instagram bio</span></span>
+        <button class="btn btn-primary" data-owner="share" style="height:36px;padding:0 14px;flex:none">Share</button>
+      </div>
       <div class="label" style="color:#CFCBC4">Menu · tap when you run out</div>
       ${items}
       <div class="label" style="color:#CFCBC4">Specials <span class="pro">PRO</span></div>
@@ -663,6 +680,8 @@
     } else if (el.dataset.owner === 'close') {
       o.open = false; o.sold.clear(); render();
       toast({ info: true, title: 'Closed for today', body: 'Your pin is off the map, and your sold-out switches reset for tomorrow.' });
+    } else if (el.dataset.owner === 'share') {
+      toast({ info: true, title: 'Share your truck page', body: "In the app, this opens your phone's share sheet so you can text the link or paste it in your Instagram bio. Customers see your menu, schedule and whether you're open, no app needed." });
     } else if (el.dataset.owner === 'special') {
       const v = (document.getElementById('special').value || '').trim();
       if (!v) { toast({ info: true, title: 'Type a special first', body: 'For example: "$2 off quesabirria until 8".' }); return; }
@@ -674,6 +693,9 @@
   document.addEventListener('input', (e) => {
     if (e.target.id === 'q') { state.q = e.target.value; if (state.q && state.chip === 'open') state.chip = ''; render(); }
     if (e.target.id === 'special') state.owner.special = e.target.value;
+  });
+  document.addEventListener('change', (e) => {
+    if (e.target.id === 'until') { state.owner.until = Number(e.target.value); render(); }
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && state.open !== null) closeTruck(); });
 
