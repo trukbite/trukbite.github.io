@@ -415,7 +415,9 @@
         return `<button class="row" data-park="${park.id}"><span class="avatar" style="background:${now.length ? 'var(--charcoal)' : '#8A8A92'};border-radius:10px">${now.length || 'P'}</span>
           <span style="min-width:0"><span class="name">${esc(park.name)}</span><br><span class="sub">${now.length ? `${now.length} ${now.length === 1 ? 'truck' : 'trucks'} here now` : 'No trucks right now'}${later.length ? ` · ${later.length} later today` : ''}</span></span><span class="right">${miles(YOU, park.at).toFixed(1)} mi</span></button>`;
       }).join('') + `<button class="row" data-event="1"><span class="avatar" style="background:var(--flame);border-radius:10px">★</span>
-        <span style="min-width:0"><span class="name">${esc(EVENT.name)}</span><br><span class="sub">${esc(EVENT.when)} · ${esc(EVENT.where)} · ${EVENT.lineup.length} trucks going</span></span><span class="right">Event</span></button>`;
+        <span style="min-width:0"><span class="name">${esc(EVENT.name)}</span><br><span class="sub">${esc(EVENT.when)} · ${esc(EVENT.where)} · ${EVENT.lineup.length} trucks going</span></span><span class="right">Event</span></button>
+        <button class="row" data-suggest="1" style="border-style:dashed"><span class="avatar" style="background:var(--sand);color:var(--charcoal);border-radius:10px">+</span>
+        <span style="min-width:0"><span class="name">Know a spot we're missing?</span><br><span class="sub">Suggest a truck park or event</span></span><span class="right">Suggest</span></button>`;
     }
     html += `<div class="label">Open now · ${open.length}</div>`;
     html += open.length ? open.map(row).join('') : `<div class="empty">No trucks open for this search right now.<span class="note">Try "All", or pick another demo time.</span></div>`;
@@ -743,7 +745,7 @@
 
   // ---- events ----
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-view],[data-time],[data-chip],[data-truck],[data-close],[data-follow],[data-owner],[data-until],[data-sold],[data-stat-sec],[data-stat-days],[data-cater],[data-park],[data-event]');
+    const el = e.target.closest('[data-view],[data-time],[data-chip],[data-truck],[data-close],[data-follow],[data-owner],[data-until],[data-sold],[data-stat-sec],[data-stat-days],[data-cater],[data-park],[data-event],[data-suggest]');
     if (!el) return;
     if (el.dataset.view) { state.view = el.dataset.view; if (state.view === 'alerts') state.unread = 0; closeTruck(); render(); panel.parentElement.scrollTop = 0; return; }
     if (el.dataset.time) { state.time = TIMES.find((t) => t.id === el.dataset.time); state.forced.clear(); render(); return; }
@@ -754,6 +756,7 @@
     if (el.dataset.until) { state.owner.until = Number(el.dataset.until); render(); return; }
     if (el.dataset.park) { openPark(el.dataset.park); return; }
     if (el.dataset.event) { openEvent(); return; }
+    if (el.dataset.suggest) { toast({ info: true, title: 'Suggest a spot', body: "In the app, anyone signed in can suggest a truck park or event. The Trukbite team checks it, and you get an alert when it's live." }); return; }
     if (el.dataset.cater === 'open') { state.cater = state.open; renderTruck(); return; }
     if (el.dataset.cater === 'send') {
       const filled = ['c-date', 'c-people', 'c-where', 'c-name'].every((id) => (document.getElementById(id)?.value || '').trim());
