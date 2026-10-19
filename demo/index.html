@@ -440,6 +440,10 @@
         <span>Your truck page<br><span class="note">trukbite.com/t/your-truck · menu, schedule and where you are, for your Instagram bio</span></span>
         <button class="btn btn-primary" data-owner="share" style="height:36px;padding:0 14px;flex:none">Share</button>
       </div>
+      <div class="owner-row" style="align-items:flex-start">
+        <span>Schedule for your website<br><span class="note">Paste one bit of code on your own website: it shows this week's stops and a Follow on Trukbite button</span></span>
+        <button class="btn btn-primary" data-owner="widget" style="height:36px;padding:0 14px;flex:none">Get code</button>
+      </div>
       <div class="label" style="color:#CFCBC4">Menu · tap when you run out</div>
       ${items}
       <div class="label" style="color:#CFCBC4">Specials <span class="pro">PRO</span></div>
@@ -713,6 +717,8 @@
     } else if (el.dataset.owner === 'close') {
       o.open = false; o.sold.clear(); render();
       toast({ info: true, title: 'Closed for today', body: 'Your pin is off the map, and your sold-out switches reset for tomorrow.' });
+    } else if (el.dataset.owner === 'widget') {
+      toast({ info: true, title: 'Your schedule, on your website', body: "In the app, this opens a page with a live preview (light or dark) and the code to copy into Wix, Squarespace or WordPress. When you change your schedule, your website updates too." });
     } else if (el.dataset.owner === 'call') {
       toast({ info: true, title: 'Reach out in one tap', body: "In the app, Call and Text open your phone with their number (Text starts a message for you). Then mark the request Contacted or Booked." });
     } else if (el.dataset.owner === 'share') {
