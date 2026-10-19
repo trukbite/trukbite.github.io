@@ -692,6 +692,7 @@
         <div class="label">Here now · ${now.length}</div>${now.length ? list(now) : '<p class="note">No trucks here at this demo time. Try another time.</p>'}
         ${later.length ? `<div class="label">Later today · ${later.length}</div>${list(later)}` : ''}
         <p class="note">In the app, every truck park gets a pin on the map with how many trucks are there, and trucks can pick the park when they add a stop.</p>
+        <p class="note"><strong>Run this park?</strong> In the app, tap "Run this place? Claim it". Once we confirm it's yours, you can update its hours and details, add events that go live right away, and invite trucks.</p>
         ${ctaCard()}</div>`;
     map.flyTo(park.at, 15, { duration: .6 });
   }
@@ -705,7 +706,7 @@
         <button class="btn ${state.going ? 'btn-following' : 'btn-primary'}" style="justify-self:start" data-going="1" aria-pressed="${state.going}">${state.going ? '✓ I’m going' : 'I’m going'}</button>
         <span class="note">${47 + (state.going ? 1 : 0)} people going · ${state.going ? "We'll remind you that morning and tell you when more trucks join." : 'Get a reminder that morning.'}</span>
         <div class="label">Lineup · ${lineup.length}</div>${lineup.map((t) => { const st = statusOf(t); return row({ t, st, m: { dish: null }, mi: miles(YOU, where(t, st).at) }); }).join('')}
-        <p class="note">Truck owners join an event with one tap in the app ("My truck will be there"), and it's added to their schedule.</p>
+        <p class="note">Truck owners join an event with one tap in the app ("My truck will be there"), and it's added to their schedule. Organizers can also invite trucks: the truck gets an alert and taps Accept.</p>
         ${ctaCard()}</div>`;
   }
 
