@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Trukbite Demo · Try it with sample trucks</title>
-<meta name="description" content="Try Trukbite before it launches: a live map of sample San Antonio food trucks, menus with dish ratings, follow and alerts.">
+<meta name="description" content="Try Trukbite before it launches: a live map of sample San Antonio food trucks, menus with dish ratings, truck parks and events, follow and alerts.">
 <meta property="og:title" content="Try the Trukbite demo">
 <meta property="og:description" content="Tap around a live map of sample San Antonio food trucks. Follow one and see the alert you'd get when it pulls up.">
 <meta property="og:image" content="https://trukbite.github.io/img/share.jpg">
@@ -306,7 +306,7 @@
   const realHour = new Date().getHours();
   const state = {
     view: 'map', time: TIMES.find((t) => t.id === params.get('time')) || (realHour < 11 ? TIMES[0] : realHour < 16 ? TIMES[1] : TIMES[2]),
-    q: '', chip: 'open', following: new Set(), alerts: [], unread: 0, open: null, forced: new Map(), surprised: new Set(),
+    q: '', chip: 'open', following: new Set(), parksFollowed: new Set(), going: false, alerts: [], unread: 0, open: null, forced: new Map(), surprised: new Set(),
     owner: { open: false, until: 21 * 60, sold: new Set(), special: '', followers: 128, sent: 0, statSec: 'overview', statDays: 7 },
   };
 
@@ -429,15 +429,27 @@
 
   function followingView() {
     const list = all().filter((t) => state.following.has(t.id)).map((t) => { const st = statusOf(t); return { t, st, m: { dish: null }, mi: miles(YOU, where(t, st).at) }; });
+    const parks = PARKS.filter((park) => state.parksFollowed.has(park.id));
+    let extra = '';
+    if (state.going) extra += `<div class="label">Events you're going to</div><button class="row" data-event="1"><span class="avatar" style="background:var(--flame);border-radius:10px">★</span>
+      <span style="min-width:0"><span class="name">${esc(EVENT.name)}</span><br><span class="sub">${esc(EVENT.when)} · ${EVENT.lineup.length} trucks</span></span><span class="right">Going</span></button>`;
+    if (parks.length) extra += `<div class="label">Truck parks</div>` + parks.map((park) => {
+      const { now, later } = atPark(park);
+      return `<button class="row" data-park="${park.id}"><span class="avatar" style="background:${now.length ? 'var(--charcoal)' : '#8A8A92'};border-radius:10px">${now.length || 'P'}</span>
+        <span style="min-width:0"><span class="name">${esc(park.name)}</span><br><span class="sub">${now.length ? `${now.length} here now` : later.length ? `${later.length} coming later today` : 'No trucks right now'}</span></span><span class="right">${miles(YOU, park.at).toFixed(1)} mi</span></button>`;
+    }).join('');
+    if (!list.length && extra) return extra;
     if (!list.length) return `<div class="empty"><h3>Follow your favorite trucks</h3><p>Open any truck and tap <b>Follow</b>. You'll see where it is right now, and get an alert when it pulls up.</p>
       <button class="btn btn-primary" data-view="map">Find a truck</button></div>`;
-    return `<div class="label">Following · ${list.length}</div>` + list.map(row).join('') + `<p class="note">In the app you choose, per truck: alerts for everything, only when they open, or off.</p>`;
+    return `<div class="label">Following · ${list.length}</div>` + list.map(row).join('') + `<p class="note">In the app you choose, per truck: alerts for everything, only when they open, or off.</p>` + extra;
   }
 
   function alertsView() {
     if (!state.alerts.length) return `<div class="empty"><h3>No alerts yet</h3><p>Follow a truck and we'll show you the alert you'd get on your phone when it pulls up.</p>
       <button class="btn btn-primary" data-view="map">Find a truck</button></div>`;
-    return `<div class="label">Alerts</div>` + state.alerts.map((a) => `<button class="row" data-truck="${a.id}">
+    return `<div class="label">Alerts</div>` + state.alerts.map((a) => a.park || a.event ? `<button class="row" ${a.park ? `data-park="${a.park}"` : 'data-event="1"'}>
+      <span class="avatar" style="background:${a.park ? 'var(--charcoal)' : 'var(--flame)'};border-radius:10px">${a.park ? 'P' : '★'}</span>
+      <span style="min-width:0"><span class="name">${esc(a.title)}</span><br><span class="sub">${esc(a.body)}</span></span><span class="right">${a.when}</span></button>` : `<button class="row" data-truck="${a.id}">
       <span class="avatar" style="background:${a.id === 0 ? 'var(--flame)' : color(trucks.find((t) => t.id === a.id))}">${a.id === 0 ? 'YOU' : initials(a.name)}</span>
       <span style="min-width:0"><span class="name">${esc(a.title)}</span><br><span class="sub">${esc(a.body)}</span></span><span class="right">${a.when}</span></button>`).join('');
   }
@@ -674,7 +686,9 @@
     detail.innerHTML = `<div class="cover" style="background:var(--charcoal)"><button class="back" data-close>← Back</button></div>
       <div class="detail-body"><div style="display:grid;gap:6px"><span class="note">TRUCK PARK · SAMPLE</span><h2>${esc(park.name)}</h2>
         <span class="note">Hours: ${esc(park.hours)} · ${miles(YOU, park.at).toFixed(1)} mi from downtown</span></div>
-        <a class="btn btn-ghost" style="justify-self:start" href="https://www.google.com/maps/dir/?api=1&destination=${park.at[0]},${park.at[1]}" target="_blank" rel="noopener">Directions</a>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-ghost" href="https://www.google.com/maps/dir/?api=1&destination=${park.at[0]},${park.at[1]}" target="_blank" rel="noopener">Directions</a>
+          <button class="btn ${state.parksFollowed.has(park.id) ? 'btn-following' : 'btn-primary'}" data-pfollow="${park.id}" aria-pressed="${state.parksFollowed.has(park.id)}">${state.parksFollowed.has(park.id) ? '♥ Following' : '♡ Follow'}</button></div>
+        <span class="note">${state.parksFollowed.has(park.id) ? "We'll tell you at 4 PM who's here tonight, and when a new event is added here." : "Follow to get tonight's lineup at 4 PM on days trucks are here."}</span>
         <div class="label">Here now · ${now.length}</div>${now.length ? list(now) : '<p class="note">No trucks here at this demo time. Try another time.</p>'}
         ${later.length ? `<div class="label">Later today · ${later.length}</div>${list(later)}` : ''}
         <p class="note">In the app, every truck park gets a pin on the map with how many trucks are there, and trucks can pick the park when they add a stop.</p>
@@ -688,6 +702,8 @@
     detail.innerHTML = `<div class="cover" style="background:var(--flame)"><button class="back" data-close>← Back</button></div>
       <div class="detail-body"><div style="display:grid;gap:6px"><span class="note" style="color:var(--flame-dark);font-weight:700">${esc(EVENT.when.toUpperCase())}</span><h2>${esc(EVENT.name)}</h2>
         <span class="note">${esc(EVENT.where)} · sample event</span></div><p>${esc(EVENT.about)}</p>
+        <button class="btn ${state.going ? 'btn-following' : 'btn-primary'}" style="justify-self:start" data-going="1" aria-pressed="${state.going}">${state.going ? '✓ I’m going' : 'I’m going'}</button>
+        <span class="note">${47 + (state.going ? 1 : 0)} people going · ${state.going ? "We'll remind you that morning and tell you when more trucks join." : 'Get a reminder that morning.'}</span>
         <div class="label">Lineup · ${lineup.length}</div>${lineup.map((t) => { const st = statusOf(t); return row({ t, st, m: { dish: null }, mi: miles(YOU, where(t, st).at) }); }).join('')}
         <p class="note">Truck owners join an event with one tap in the app ("My truck will be there"), and it's added to their schedule.</p>
         ${ctaCard()}</div>`;
@@ -704,12 +720,12 @@
 
   // ---- alerts ----
   const toasts = document.getElementById('toasts');
-  function toast({ title, body, id, info }) {
+  function toast({ title, body, id, info, onOpen }) {
     const el = document.createElement('button');
     el.className = 'toast' + (info ? ' info' : '');
     el.innerHTML = info ? `<span><span class="t">${esc(title)}</span><br><span class="b">${esc(body)}</span></span>`
       : `<img src="../img/logo.png" alt=""><span><span class="app-name"><span>TRUKBITE</span><span>now</span></span><span class="t">${esc(title)}</span><br><span class="b">${esc(body)}</span></span>`;
-    el.addEventListener('click', () => { el.remove(); if (id !== undefined) openTruck(id); });
+    el.addEventListener('click', () => { el.remove(); if (onOpen) onOpen(); else if (id !== undefined) openTruck(id); });
     toasts.prepend(el);
     setTimeout(() => el.remove(), 8000);
   }
@@ -719,6 +735,34 @@
     state.alerts.slice(1).forEach((a) => { if (a.when === 'now') a.when = 'earlier'; });
     if (state.view !== 'alerts') state.unread++;
     toast({ title, body, id });
+  }
+  function placeAlert(a, onOpen) {
+    state.alerts.unshift({ ...a, when: 'now' });
+    state.alerts.slice(1).forEach((x) => { if (x.when === 'now') x.when = 'earlier'; });
+    if (state.view !== 'alerts') state.unread++;
+    toast({ title: a.title, body: a.body, onOpen });
+    render();
+  }
+  function followPark(id) {
+    const park = PARKS.find((x) => x.id === id);
+    if (state.parksFollowed.has(id)) { state.parksFollowed.delete(id); openPark(id); render(); return; }
+    state.parksFollowed.add(id); openPark(id); render();
+    toast({ info: true, title: `Following ${park.name}`, body: "On days trucks are here, you'll get tonight's lineup at 4 PM. Here's what that looks like…" });
+    setTimeout(() => {
+      if (!state.parksFollowed.has(id)) return;
+      const { now, later } = atPark(park);
+      const names = [...now, ...later].map(({ t }) => t.name);
+      const pick = names.length ? names : trucks.slice(0, 5).map((t) => t.name);
+      placeAlert({ park: id, title: `Tonight at ${park.name}`, body: pick.length <= 2 ? pick.join(' and ') : `${pick[0]}, ${pick[1]} + ${pick.length - 2} more` }, () => openPark(id));
+    }, 4500);
+  }
+  function toggleGoing() {
+    state.going = !state.going; openEvent(); render();
+    if (!state.going) return;
+    toast({ info: true, title: "You're going", body: "We'll remind you the morning of, and tell you when more trucks join. Here's the reminder…" });
+    setTimeout(() => {
+      if (state.going) placeAlert({ event: 1, title: `Today: ${EVENT.name}`, body: `6:00 PM · ${EVENT.where} · ${EVENT.lineup.length} trucks` }, openEvent);
+    }, 4500);
   }
   function follow(id) {
     const t = trucks.find((x) => x.id === id);
@@ -745,7 +789,7 @@
 
   // ---- events ----
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-view],[data-time],[data-chip],[data-truck],[data-close],[data-follow],[data-owner],[data-until],[data-sold],[data-stat-sec],[data-stat-days],[data-cater],[data-park],[data-event],[data-suggest]');
+    const el = e.target.closest('[data-view],[data-time],[data-chip],[data-truck],[data-close],[data-follow],[data-owner],[data-until],[data-sold],[data-stat-sec],[data-stat-days],[data-cater],[data-park],[data-event],[data-suggest],[data-pfollow],[data-going]');
     if (!el) return;
     if (el.dataset.view) { state.view = el.dataset.view; if (state.view === 'alerts') state.unread = 0; closeTruck(); render(); panel.parentElement.scrollTop = 0; return; }
     if (el.dataset.time) { state.time = TIMES.find((t) => t.id === el.dataset.time); state.forced.clear(); render(); return; }
@@ -754,6 +798,8 @@
     if (el.hasAttribute('data-close')) { closeTruck(); return; }
     if (el.dataset.follow) { follow(Number(el.dataset.follow)); return; }
     if (el.dataset.until) { state.owner.until = Number(el.dataset.until); render(); return; }
+    if (el.dataset.pfollow) { followPark(el.dataset.pfollow); return; }
+    if (el.dataset.going) { toggleGoing(); return; }
     if (el.dataset.park) { openPark(el.dataset.park); return; }
     if (el.dataset.event) { openEvent(); return; }
     if (el.dataset.suggest) { toast({ info: true, title: 'Suggest a spot', body: "In the app, anyone signed in can suggest a truck park or event. The Trukbite team checks it, and you get an alert when it's live." }); return; }
