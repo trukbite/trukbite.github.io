@@ -175,6 +175,8 @@
   .pin.later { filter: grayscale(1) opacity(.75) drop-shadow(0 3px 4px rgba(0,0,0,.25)); width: 28px; height: 38px; }
   .pin.mine { animation: pop .5s ease-out; }
   .pin.sel { transform: scale(1.25); }
+  .park-pin { width: 36px; height: 36px; border-radius: 9px; background: var(--charcoal); border: 2px solid #fff; color: #fff; display: grid; place-items: center; font: 800 16px var(--display); box-shadow: 0 3px 6px rgba(0,0,0,.3); }
+  .park-pin.none { background: #8A8A92; }
   .you { width: 18px; height: 18px; border-radius: 50%; background: #2F7DF6; border: 3px solid #fff; box-shadow: 0 0 0 6px rgba(47,125,246,.2); }
   @keyframes pop { 0% { transform: translateY(-30px) scale(.6); opacity: 0; } 100% { transform: none; opacity: 1; } }
   .leaflet-tooltip.tip { font: 700 13px var(--body); border-radius: 8px; padding: 3px 8px; }
@@ -287,6 +289,19 @@
     menu: [{ cat: 'Tacos', name: 'Your best taco', desc: '', price: 400, tags: [], rating: null, count: 0, i: 0 }, { cat: 'Tacos', name: 'Quesabirria (3)', desc: '', price: 1200, tags: [], rating: null, count: 0, i: 1 }, { cat: 'Drinks', name: 'Agua fresca', desc: '', price: 350, tags: ['vegan'], rating: null, count: 0, i: 2 }],
     stops: [{ place: 'Hemisfair lawn', at: [29.4206, -98.4856], days: [], start: 0, end: 0 }], top: -1, soldOut: -1, mine: true };
 
+  // Sample truck parks and one sample event (truck parks & events, comp list #4).
+  const PARKS = [
+    { id: 'p1', name: 'Pearl Lawn Food Park', at: [29.4431, -98.4801], hours: 'Every day, 11 AM–10 PM' },
+    { id: 'p2', name: 'Westside Market Food Park', at: [29.4228, -98.5432], hours: 'Tue–Sat, 11 AM–3 PM' },
+    { id: 'p3', name: 'Commerce St Brewery Yard', at: [29.4182, -98.5361], hours: 'Fri–Sat evenings' },
+  ];
+  const EVENT = { name: 'Friday Night Food Truck Rally', where: 'Hemisfair lawn', when: 'Fri · 6–10 PM', about: 'Live music, games and a dozen trucks on the lawn.', lineup: [3, 9, 13, 21] };
+  const PARK_MILES = 0.15;
+  function atPark(park) {
+    const here = all().map((t) => ({ t, st: statusOf(t) })).filter(({ t, st }) => st.kind !== 'closed' && miles(park.at, where(t, st).at) <= PARK_MILES);
+    return { now: here.filter((x) => x.st.kind === 'open'), later: here.filter((x) => x.st.kind !== 'open') };
+  }
+
   const params = new URLSearchParams(location.search);
   const realHour = new Date().getHours();
   const state = {
@@ -353,6 +368,12 @@
         .on('click', () => openTruck(t.id));
       mk.addTo(layer); markers.set(t.id, mk);
     }
+    for (const park of PARKS) {
+      const n = atPark(park).now.length;
+      const icon = L.divIcon({ className: '', html: `<div class="park-pin ${n ? '' : 'none'}">${n || 'P'}</div>`, iconSize: [36, 36], iconAnchor: [18, 36] });
+      L.marker(park.at, { icon, title: park.name, zIndexOffset: 800 }).bindTooltip(esc(park.name), { direction: 'top', offset: [0, -36], className: 'tip' })
+        .on('click', () => openPark(park.id)).addTo(layer);
+    }
   }
 
   // ---- panel views ----
@@ -388,6 +409,14 @@
         <button class="chip" data-chip="" aria-pressed="${state.chip === ''}">All</button>
         ${CHIPS.map((c) => `<button class="chip" data-chip="${c}" aria-pressed="${state.chip === c}">${c}</button>`).join('')}
       </div>`;
+    if (!state.q) {
+      html += `<div class="label">Truck parks &amp; events</div>` + PARKS.map((park) => {
+        const { now, later } = atPark(park);
+        return `<button class="row" data-park="${park.id}"><span class="avatar" style="background:${now.length ? 'var(--charcoal)' : '#8A8A92'};border-radius:10px">${now.length || 'P'}</span>
+          <span style="min-width:0"><span class="name">${esc(park.name)}</span><br><span class="sub">${now.length ? `${now.length} ${now.length === 1 ? 'truck' : 'trucks'} here now` : 'No trucks right now'}${later.length ? ` · ${later.length} later today` : ''}</span></span><span class="right">${miles(YOU, park.at).toFixed(1)} mi</span></button>`;
+      }).join('') + `<button class="row" data-event="1"><span class="avatar" style="background:var(--flame);border-radius:10px">★</span>
+        <span style="min-width:0"><span class="name">${esc(EVENT.name)}</span><br><span class="sub">${esc(EVENT.when)} · ${esc(EVENT.where)} · ${EVENT.lineup.length} trucks going</span></span><span class="right">Event</span></button>`;
+    }
     html += `<div class="label">Open now · ${open.length}</div>`;
     html += open.length ? open.map(row).join('') : `<div class="empty">No trucks open for this search right now.<span class="note">Try "All", or pick another demo time.</span></div>`;
     if (showLater && later.length) html += `<div class="label">Opening soon &amp; later today · ${later.length}</div>` + later.map(row).join('');
@@ -635,6 +664,33 @@
       <button class="btn btn-primary" data-cater="send" style="justify-self:start">Send request</button></div>`;
   }
 
+  function openPark(id) {
+    const park = PARKS.find((x) => x.id === id);
+    const { now, later } = atPark(park);
+    state.open = null; detail.hidden = false; detail.scrollTop = 0;
+    const list = (xs) => xs.map(({ t, st }) => row({ t, st, m: { dish: null }, mi: miles(YOU, where(t, st).at) })).join('');
+    detail.innerHTML = `<div class="cover" style="background:var(--charcoal)"><button class="back" data-close>← Back</button></div>
+      <div class="detail-body"><div style="display:grid;gap:6px"><span class="note">TRUCK PARK · SAMPLE</span><h2>${esc(park.name)}</h2>
+        <span class="note">Hours: ${esc(park.hours)} · ${miles(YOU, park.at).toFixed(1)} mi from downtown</span></div>
+        <a class="btn btn-ghost" style="justify-self:start" href="https://www.google.com/maps/dir/?api=1&destination=${park.at[0]},${park.at[1]}" target="_blank" rel="noopener">Directions</a>
+        <div class="label">Here now · ${now.length}</div>${now.length ? list(now) : '<p class="note">No trucks here at this demo time. Try another time.</p>'}
+        ${later.length ? `<div class="label">Later today · ${later.length}</div>${list(later)}` : ''}
+        <p class="note">In the app, every truck park gets a pin on the map with how many trucks are there, and trucks can pick the park when they add a stop.</p>
+        ${ctaCard()}</div>`;
+    map.flyTo(park.at, 15, { duration: .6 });
+  }
+
+  function openEvent() {
+    state.open = null; detail.hidden = false; detail.scrollTop = 0;
+    const lineup = EVENT.lineup.map((id) => trucks.find((t) => t.id === id)).filter(Boolean);
+    detail.innerHTML = `<div class="cover" style="background:var(--flame)"><button class="back" data-close>← Back</button></div>
+      <div class="detail-body"><div style="display:grid;gap:6px"><span class="note" style="color:var(--flame-dark);font-weight:700">${esc(EVENT.when.toUpperCase())}</span><h2>${esc(EVENT.name)}</h2>
+        <span class="note">${esc(EVENT.where)} · sample event</span></div><p>${esc(EVENT.about)}</p>
+        <div class="label">Lineup · ${lineup.length}</div>${lineup.map((t) => { const st = statusOf(t); return row({ t, st, m: { dish: null }, mi: miles(YOU, where(t, st).at) }); }).join('')}
+        <p class="note">Truck owners join an event with one tap in the app ("My truck will be there"), and it's added to their schedule.</p>
+        ${ctaCard()}</div>`;
+  }
+
   function openTruck(id) {
     const first = state.open !== id;
     state.open = id; detail.hidden = false; renderTruck(); drawMap();
@@ -687,7 +743,7 @@
 
   // ---- events ----
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-view],[data-time],[data-chip],[data-truck],[data-close],[data-follow],[data-owner],[data-until],[data-sold],[data-stat-sec],[data-stat-days],[data-cater]');
+    const el = e.target.closest('[data-view],[data-time],[data-chip],[data-truck],[data-close],[data-follow],[data-owner],[data-until],[data-sold],[data-stat-sec],[data-stat-days],[data-cater],[data-park],[data-event]');
     if (!el) return;
     if (el.dataset.view) { state.view = el.dataset.view; if (state.view === 'alerts') state.unread = 0; closeTruck(); render(); panel.parentElement.scrollTop = 0; return; }
     if (el.dataset.time) { state.time = TIMES.find((t) => t.id === el.dataset.time); state.forced.clear(); render(); return; }
@@ -696,6 +752,8 @@
     if (el.hasAttribute('data-close')) { closeTruck(); return; }
     if (el.dataset.follow) { follow(Number(el.dataset.follow)); return; }
     if (el.dataset.until) { state.owner.until = Number(el.dataset.until); render(); return; }
+    if (el.dataset.park) { openPark(el.dataset.park); return; }
+    if (el.dataset.event) { openEvent(); return; }
     if (el.dataset.cater === 'open') { state.cater = state.open; renderTruck(); return; }
     if (el.dataset.cater === 'send') {
       const filled = ['c-date', 'c-people', 'c-where', 'c-name'].every((id) => (document.getElementById(id)?.value || '').trim());
