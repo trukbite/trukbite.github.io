@@ -445,6 +445,15 @@
       <div class="label" style="color:#CFCBC4">Specials <span class="pro">PRO</span></div>
       <input id="special" maxlength="140" placeholder="e.g. $2 off quesabirria until 8" value="${esc(o.special)}" aria-label="Special for your followers">
       <button class="btn btn-primary" data-owner="special" style="justify-self:start">Send to followers</button>
+      <div class="label" style="color:#CFCBC4">Catering requests <span class="pro">PRO</span></div>
+      <div class="ocard">
+        <div class="between"><b>Sat, Nov 14 · 11:30 AM</b><span class="pro">NEW</span></div>
+        <span>60 people · Office lunch</span>
+        <span class="note">📍 Medical Center office park · "Two hours, a few vegetarian options please"</span>
+        <span><b>Jessica R.</b> <span class="note">· (210) 555-0147</span></span>
+        <div style="display:flex;gap:8px"><button class="btn btn-primary" data-owner="call" style="flex:1;height:36px">Call</button><button class="btn btn-primary" data-owner="call" style="flex:1;height:36px">Text</button></div>
+        <span class="note">Customers send these from your truck page. Mark each one Contacted, Booked or Declined.</span>
+      </div>
     </div>` + statsBlock() + `<div class="cta"><h3>Run a truck in San Antonio?</h3><p>The first 20 trucks get Pro free for 6 months after launch, then 50% off for life.</p>
       <a class="btn js-form" href="${FORM_URL}" target="_blank" rel="noopener">Claim a founding spot</a></div>`;
   }
@@ -601,12 +610,27 @@
           <a class="btn btn-ghost" href="https://www.google.com/maps/dir/?api=1&destination=${spot.at[0]},${spot.at[1]}" target="_blank" rel="noopener">Directions</a>
         </div>
         ${!t.mine && !following ? `<p class="note">Tap Follow and watch for the alert.</p>` : ''}
+        ${t.mine ? '' : cateringCard(t)}
         <div class="card"><h3>Menu</h3>${menu}</div>
         <div class="card"><h3>This week</h3><div class="week">${week}</div></div>
         ${reviews}
         ${ctaCard()}
       </div>`;
   }
+  // Customer side of catering requests (Pro trucks in the real app; every sample truck here).
+  function cateringCard(t) {
+    if (state.cater !== t.id) {
+      return `<div class="card"><h3>Request catering</h3><p class="note">Office lunch, party or wedding? Ask ${esc(t.name)} to cater it.</p>
+        <button class="btn btn-ghost" data-cater="open" style="justify-self:start">Request catering</button></div>`;
+    }
+    return `<div class="card"><h3>Request catering</h3>
+      <label class="note" for="c-date">Date</label><input id="c-date" class="search" type="date">
+      <label class="note" for="c-people">How many people?</label><input id="c-people" class="search" type="number" min="1" placeholder="e.g. 60">
+      <label class="note" for="c-where">Where?</label><input id="c-where" class="search" placeholder="Address or area">
+      <label class="note" for="c-name">Your name and phone</label><input id="c-name" class="search" placeholder="Name · phone">
+      <button class="btn btn-primary" data-cater="send" style="justify-self:start">Send request</button></div>`;
+  }
+
   function openTruck(id) {
     const first = state.open !== id;
     state.open = id; detail.hidden = false; renderTruck(); drawMap();
@@ -659,7 +683,7 @@
 
   // ---- events ----
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-view],[data-time],[data-chip],[data-truck],[data-close],[data-follow],[data-owner],[data-until],[data-sold],[data-stat-sec],[data-stat-days]');
+    const el = e.target.closest('[data-view],[data-time],[data-chip],[data-truck],[data-close],[data-follow],[data-owner],[data-until],[data-sold],[data-stat-sec],[data-stat-days],[data-cater]');
     if (!el) return;
     if (el.dataset.view) { state.view = el.dataset.view; if (state.view === 'alerts') state.unread = 0; closeTruck(); render(); panel.parentElement.scrollTop = 0; return; }
     if (el.dataset.time) { state.time = TIMES.find((t) => t.id === el.dataset.time); state.forced.clear(); render(); return; }
@@ -668,6 +692,15 @@
     if (el.hasAttribute('data-close')) { closeTruck(); return; }
     if (el.dataset.follow) { follow(Number(el.dataset.follow)); return; }
     if (el.dataset.until) { state.owner.until = Number(el.dataset.until); render(); return; }
+    if (el.dataset.cater === 'open') { state.cater = state.open; renderTruck(); return; }
+    if (el.dataset.cater === 'send') {
+      const filled = ['c-date', 'c-people', 'c-where', 'c-name'].every((id) => (document.getElementById(id)?.value || '').trim());
+      if (!filled) { toast({ info: true, title: 'Fill in all four', body: 'Date, headcount, where, and your name and phone.' }); return; }
+      const t = all().find((x) => x.id === state.open);
+      state.cater = null; renderTruck();
+      toast({ info: true, title: `Request sent to ${t.name}`, body: "In the real app, the truck gets an alert with your event details and contact info, and reaches out to you directly. (Demo: nothing was sent.)" });
+      return;
+    }
     if (el.dataset.statSec) { state.owner.statSec = el.dataset.statSec; render(); return; }
     if (el.dataset.statDays) { state.owner.statDays = Number(el.dataset.statDays); render(); return; }
     if (el.dataset.sold) { const i = Number(el.dataset.sold), s = state.owner.sold; s.has(i) ? s.delete(i) : s.add(i); render(); return; }
@@ -680,6 +713,8 @@
     } else if (el.dataset.owner === 'close') {
       o.open = false; o.sold.clear(); render();
       toast({ info: true, title: 'Closed for today', body: 'Your pin is off the map, and your sold-out switches reset for tomorrow.' });
+    } else if (el.dataset.owner === 'call') {
+      toast({ info: true, title: 'Reach out in one tap', body: "In the app, Call and Text open your phone with their number (Text starts a message for you). Then mark the request Contacted or Booked." });
     } else if (el.dataset.owner === 'share') {
       toast({ info: true, title: 'Share your truck page', body: "In the app, this opens your phone's share sheet so you can text the link or paste it in your Instagram bio. Customers see your menu, schedule and whether you're open, no app needed." });
     } else if (el.dataset.owner === 'special') {
