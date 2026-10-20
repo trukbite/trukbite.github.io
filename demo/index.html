@@ -624,6 +624,7 @@
 
   // ---- truck page ----
   const detail = document.getElementById('detail');
+  const blockedWho = new Set(); // reviewers you blocked (demo: just hides them)
   function reviewsFor(t) {
     const dishes = t.menu.filter((m) => m.rating).sort((a, b) => b.rating - a.rating);
     const d1 = (dishes[0] || t.menu[0]).name, d2 = (dishes[1] || dishes[0] || t.menu[0]).name;
@@ -649,7 +650,7 @@
       return `<div class="day ${i === state.time.day ? 'today' : ''}"><b>${d.toUpperCase()}</b><span>${s.length ? s.map((x) => `${clock(x.start)}–${clock(x.end)} · ${esc(x.place)}`).join('<br>') : '<span class="note">Day off</span>'}</span></div>`;
     }).join('');
     const reviews = t.mine ? '' : `<div class="card"><h3>Reviews · <span class="star">★ ${t.rating}</span> <span class="note">(${t.reviews})</span></h3>
-      ${reviewsFor(t).map((r) => `<div class="review"><b>${esc(r.who)}</b> <span class="star">${'★'.repeat(r.stars)}</span><p>${esc(r.text)}</p>${r.reply ? `<div class="reply"><b>Reply from ${esc(t.name)}:</b> ${esc(r.reply)}</div>` : ''}</div>`).join('')}</div>`;
+      ${reviewsFor(t).filter((r) => !blockedWho.has(r.who)).map((r) => `<div class="review"><b>${esc(r.who)}</b> <span class="star">${'★'.repeat(r.stars)}</span><p>${esc(r.text)}</p>${r.reply ? `<div class="reply"><b>Reply from ${esc(t.name)}:</b> ${esc(r.reply)}</div>` : ''}<span class="note"><a href="#" data-rreport="${esc(r.who)}">Report</a> · <a href="#" data-rblock="${esc(r.who)}">Block</a></span></div>`).join('')}</div>`;
     detail.innerHTML = `<div class="cover" style="background:${t.mine ? 'var(--flame)' : color(t)}"><button class="back" data-close>← Back</button></div>
       <div class="detail-body">
         <div style="display:grid;gap:6px"><h2>${esc(t.name)}</h2>
@@ -794,8 +795,10 @@
 
   // ---- events ----
   document.addEventListener('click', (e) => {
-    const el = e.target.closest('[data-view],[data-time],[data-chip],[data-truck],[data-close],[data-follow],[data-owner],[data-until],[data-sold],[data-stat-sec],[data-stat-days],[data-cater],[data-park],[data-event],[data-suggest],[data-pfollow],[data-going]');
+    const el = e.target.closest('[data-view],[data-time],[data-chip],[data-truck],[data-close],[data-follow],[data-owner],[data-until],[data-sold],[data-stat-sec],[data-stat-days],[data-cater],[data-park],[data-event],[data-suggest],[data-pfollow],[data-going],[data-rreport],[data-rblock]');
     if (!el) return;
+    if (el.dataset.rreport) { e.preventDefault(); toast({ info: true, title: 'Report a review', body: "In the app, pick a reason (off-topic, hateful, fake, personal info). The Trukbite team checks every report and removes reviews that break the rules." }); return; }
+    if (el.dataset.rblock) { e.preventDefault(); blockedWho.add(el.dataset.rblock); renderTruck(); toast({ info: true, title: `You blocked ${el.dataset.rblock}`, body: "You won't see their reviews anymore, and they aren't told. Unblock anytime in Profile → Blocked people." }); return; }
     if (el.dataset.view) { state.view = el.dataset.view; if (state.view === 'alerts') state.unread = 0; closeTruck(); render(); panel.parentElement.scrollTop = 0; return; }
     if (el.dataset.time) { state.time = TIMES.find((t) => t.id === el.dataset.time); state.forced.clear(); render(); return; }
     if (el.dataset.chip !== undefined) { state.chip = el.dataset.chip; render(); return; }
