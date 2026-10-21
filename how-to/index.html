@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How-to videos · Trukbite</title>
+<meta name="description" content="Short how-to videos for Trukbite truck owners: open and close, your menu, your schedule, getting customers, stats, your team and your plan.">
+<meta property="og:title" content="Trukbite how-to videos">
+<meta property="og:description" content="Everything a truck owner can do in Trukbite, in 8 short videos.">
+<meta property="og:image" content="https://trukbite.com/media/how-to/owner-ch1.jpg">
+<meta property="og:url" content="https://trukbite.com/how-to/">
+<meta name="theme-color" content="#FF6B1A">
+<link rel="icon" href="../img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
+<style>
+  /* Same "Sizzle" palette and type as the info page. */
+  :root {
+    --flame: #FF6B1A; --flame-dark: #C24A06; --mustard: #FFC83D; --charcoal: #1F1F24;
+    --cream: #FFF8F0; --sand: #F3EADF; --line: #EFE5D8; --soft: #4A4A52; --muted: #6B6B73;
+    --display: "Poppins", "Segoe UI", system-ui, sans-serif; --body: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--cream); color: var(--charcoal); font: 17px/1.55 var(--body); }
+  img, video { max-width: 100%; display: block; }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+  h1, h2, h3 { font-family: var(--display); line-height: 1.12; margin: 0; text-wrap: balance; }
+  h1 { font-weight: 800; font-size: clamp(34px, 6vw, 54px); }
+  h2 { font-weight: 800; font-size: clamp(24px, 3.6vw, 32px); }
+  h3 { font-weight: 700; font-size: 19px; }
+  p { margin: 0; }
+  .eyebrow { font: 700 13px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--flame-dark); }
+  .top { padding: 18px 0; }
+  .nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 800 22px var(--display); text-decoration: none; }
+  .nav .links { display: flex; gap: 20px; font-weight: 700; font-size: 15px; }
+  .nav .links a { text-decoration: none; }
+  .nav .links a:hover { color: var(--flame-dark); }
+  .intro { padding: 36px 0 28px; display: grid; gap: 14px; }
+  .intro p { color: var(--soft); max-width: 56ch; font-size: 19px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .chips a { text-decoration: none; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 14px; font-weight: 700; }
+  .chips a:hover { border-color: var(--flame); }
+  .list { display: grid; gap: 22px; padding-bottom: 56px; }
+  .ch { background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 18px; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 22px; align-items: center; scroll-margin-top: 16px; }
+  .ch video { width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; background: var(--charcoal); }
+  .ch .copy { display: grid; gap: 10px; align-content: start; }
+  .ch .meta { font: 700 13px var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--flame-dark); }
+  .ch p { color: var(--soft); font-size: 16px; }
+  .ch ul { margin: 0; padding-left: 18px; color: var(--soft); font-size: 15px; display: grid; gap: 4px; }
+  .tag { display: inline-block; background: var(--mustard); font: 700 12px var(--body); letter-spacing: .06em; padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: 2px; }
+  .soon { background: var(--sand); border-radius: 22px; padding: 26px; display: grid; gap: 8px; margin-bottom: 56px; }
+  .soon p { color: var(--soft); }
+  footer { padding: 0 0 40px; color: var(--muted); font-size: 14px; }
+  footer .row { display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; }
+  footer a { color: var(--soft); }
+  @media (max-width: 760px) { .ch { grid-template-columns: 1fr; gap: 14px; } .nav .links a.hide-sm { display: none; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<!-- How-to videos. Videos live in ../media/how-to/ (owner-chN.mp4 + .jpg poster), made in videos/tutorial-chNN/. -->
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="../"><img src="../img/logo.png" alt="" width="23" height="32">Trukbite</a>
+    <nav class="links" aria-label="Page">
+      <a class="hide-sm" href="../#trucks">For truck owners</a>
+      <a href="../demo/">Try the demo</a>
+      <a href="../">Home</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <span class="eyebrow">How-to videos · For truck owners</span>
+    <h1>Everything your truck can do, in 8 short videos</h1>
+    <p>About 8 minutes in all. Watch them in order, or jump to the one you need.</p>
+    <nav class="chips" aria-label="Chapters">
+      <a href="#ch1">1 · Welcome</a><a href="#ch2">2 · Sign up</a><a href="#ch3">3 · Open &amp; close</a><a href="#ch4">4 · Menu</a>
+      <a href="#ch5">5 · Schedule</a><a href="#ch6">6 · Get customers</a><a href="#ch7">7 · Stats &amp; team</a><a href="#ch8">8 · Profile &amp; plan</a>
+    </nav>
+  </section>
+
+  <div class="list">
+    <article class="ch" id="ch1">
+      <video src="../media/how-to/owner-ch1.mp4" poster="../media/how-to/owner-ch1.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 1 · 0:44</span><h2>Welcome to Trukbite</h2>
+        <p>Where everything lives: My truck to open and close, More for everything else, and what the Pro tag means.</p></div>
+    </article>
+    <article class="ch" id="ch2">
+      <video src="../media/how-to/owner-ch2.mp4" poster="../media/how-to/owner-ch2.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 2 · 0:55</span><h2>Sign up and get approved</h2>
+        <p>Sign in with your phone number, add your truck basics and a photo of your permit. We usually approve you within a day.</p></div>
+    </article>
+    <article class="ch" id="ch3">
+      <video src="../media/how-to/owner-ch3.mp4" poster="../media/how-to/owner-ch3.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 3 · 1:16</span><h2>Open, break, move &amp; close</h2>
+        <ul><li>Open here, and followers get an alert</li><li>+30 min, Short break, Move here</li><li>Close with a reason, or post Opening soon</li></ul></div>
+    </article>
+    <article class="ch" id="ch4">
+      <video src="../media/how-to/owner-ch4.mp4" poster="../media/how-to/owner-ch4.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 4 · 0:55</span><h2>Your menu</h2>
+        <p>Add dishes, flip Sold out, hide seasonal items and preview your menu the way customers see it.</p></div>
+    </article>
+    <article class="ch" id="ch5">
+      <video src="../media/how-to/owner-ch5.mp4" poster="../media/how-to/owner-ch5.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 5 · 1:23</span><h2>Your schedule</h2>
+        <p>Weekly stops, truck parks, cancelling a stop, planning next week<span class="tag">Pro</span>, events and Google Calendar.</p></div>
+    </article>
+    <article class="ch" id="ch6">
+      <video src="../media/how-to/owner-ch6.mp4" poster="../media/how-to/owner-ch6.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 6 · 1:01</span><h2>Get customers</h2>
+        <p>Your truck page, the schedule for your website, specials<span class="tag">Pro</span>, replying to reviews and catering requests<span class="tag">Pro</span>.</p></div>
+    </article>
+    <article class="ch" id="ch7">
+      <video src="../media/how-to/owner-ch7.mp4" poster="../media/how-to/owner-ch7.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 7 · 0:46</span><h2>Stats and your team<span class="tag">Pro</span></h2>
+        <p>Followers, views and direction taps, your weekly summary, and inviting staff to run the truck from their own phones.</p></div>
+    </article>
+    <article class="ch" id="ch8">
+      <video src="../media/how-to/owner-ch8.mp4" poster="../media/how-to/owner-ch8.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 8 · 0:54</span><h2>Profile, permit and plan</h2>
+        <p>Your truck profile, renewing your permit, your plan and billing, and where to get help.</p></div>
+    </article>
+  </div>
+
+  <section class="soon">
+    <h3>Videos for customers are coming soon</h3>
+    <p>Questions in the meantime? Email <a href="mailto:support@trukbite.com">support@trukbite.com</a>, or in the app go to Help &amp; feedback.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>© 2026 Trukbite · San Antonio, TX</span>
+    <span><a href="../">trukbite.com</a> · <a href="mailto:support@trukbite.com">support@trukbite.com</a></span>
+  </div>
+</footer>
+<script>
+  // Only one video plays at a time.
+  document.querySelectorAll('video').forEach((v) => v.addEventListener('play', () => {
+    document.querySelectorAll('video').forEach((o) => { if (o !== v) o.pause(); });
+  }));
+</script>
+</body>
+</html>
