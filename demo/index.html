@@ -491,6 +491,10 @@
         <span>Google Calendar<br><span class="note">Plan in your calendar: every event becomes a stop on your schedule, and changes follow on their own</span></span>
         <button class="btn btn-primary" data-owner="calendar" style="height:36px;padding:0 14px;flex:none">Connect</button>
       </div>
+      <div class="owner-row" style="align-items:flex-start">
+        <span>Plan &amp; billing<br><span class="note">Founding truck · Pro free during the beta. Go Pro, switch monthly/yearly or cancel anytime</span></span>
+        <button class="btn btn-primary" data-owner="billing" style="height:36px;padding:0 14px;flex:none">See plans</button>
+      </div>
       <div class="label" style="color:#CFCBC4">Menu · tap when you run out</div>
       ${items}
       <div class="label" style="color:#CFCBC4">Specials <span class="pro">PRO</span></div>
@@ -836,6 +840,8 @@
       toast({ info: true, title: 'Your schedule, on your website', body: "In the app, this opens a page with a live preview (light or dark) and the code to copy into Wix, Squarespace or WordPress. When you change your schedule, your website updates too." });
     } else if (el.dataset.owner === 'calendar') {
       toast({ info: true, title: 'Your calendar, on your schedule', body: "In the app, you paste your Google Calendar's secret link once. Each event becomes a stop at your saved spot or truck park, and Trukbite asks once about any new address. Move or delete an event and your Trukbite schedule follows." });
+    } else if (el.dataset.owner === 'billing') {
+      toast({ info: true, title: 'Your plan, your call', body: "In the app, More → Plan & billing shows your plan. Go Pro for $14.99/month or $149/year (founding trucks: $7.49/month or $74.50/year for life). Payments are handled by Stripe, and you can change your card, switch monthly/yearly or cancel anytime." });
     } else if (el.dataset.owner === 'call') {
       toast({ info: true, title: 'Reach out in one tap', body: "In the app, Call and Text open your phone with their number (Text starts a message for you). Then mark the request Contacted or Booked." });
     } else if (el.dataset.owner === 'share') {
