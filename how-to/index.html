@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>How-to videos · Trukbite</title>
-<meta name="description" content="Short how-to videos for Trukbite truck owners: open and close, your menu, your schedule, getting customers, stats, your team and your plan.">
+<meta name="description" content="Short how-to videos for Trukbite. Customers: find trucks, follow them, alerts, reviews, truck parks, events and catering. Truck owners: open and close, menu, schedule, getting customers, stats, team and plan.">
 <meta property="og:title" content="Trukbite how-to videos">
-<meta property="og:description" content="Everything a truck owner can do in Trukbite, in 8 short videos.">
+<meta property="og:description" content="How to use Trukbite, in short videos: 6 for customers, 8 for truck owners.">
 <meta property="og:image" content="https://trukbite.com/media/how-to/owner-ch1.jpg">
 <meta property="og:url" content="https://trukbite.com/how-to/">
 <meta name="theme-color" content="#FF6B1A">
@@ -52,17 +52,24 @@
   .ch p { color: var(--soft); font-size: 16px; }
   .ch ul { margin: 0; padding-left: 18px; color: var(--soft); font-size: 15px; display: grid; gap: 4px; }
   .tag { display: inline-block; background: var(--mustard); font: 700 12px var(--body); letter-spacing: .06em; padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: 2px; }
+  .pick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 8px; max-width: 640px; }
+  .pick a { text-decoration: none; background: #fff; border: 2px solid var(--line); border-radius: 18px; padding: 14px 18px; display: grid; gap: 2px; }
+  .pick a:hover { border-color: var(--flame); }
+  .pick b { font: 800 19px var(--display); }
+  .pick span { color: var(--muted); font-size: 14px; }
+  .part { padding: 20px 0 22px; display: grid; gap: 10px; scroll-margin-top: 16px; }
+  .parth { font-size: clamp(26px, 4vw, 36px); }
   .soon { background: var(--sand); border-radius: 22px; padding: 26px; display: grid; gap: 8px; margin-bottom: 56px; }
   .soon p { color: var(--soft); }
   footer { padding: 0 0 40px; color: var(--muted); font-size: 14px; }
   footer .row { display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; }
   footer a { color: var(--soft); }
-  @media (max-width: 760px) { .ch { grid-template-columns: 1fr; gap: 14px; } .nav .links a.hide-sm { display: none; } }
+  @media (max-width: 760px) { .ch { grid-template-columns: 1fr; gap: 14px; } .pick { grid-template-columns: 1fr; } .nav .links a.hide-sm { display: none; } }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
-<!-- How-to videos. Videos live in ../media/how-to/ (owner-chN.mp4 + .jpg poster), made in videos/tutorial-chNN/. -->
+<!-- How-to videos. Videos live in ../media/how-to/ (customer-chN / owner-chN .mp4 + .jpg poster), made in videos/tutorial-cuNN/ and videos/tutorial-chNN/. Owner chapter ids stay #ch1-#ch8 (linked from outreach). -->
 <header class="top">
   <div class="wrap nav">
     <a class="brand" href="../"><img src="../img/logo.png" alt="" width="23" height="32">Trukbite</a>
@@ -76,10 +83,61 @@
 
 <main class="wrap">
   <section class="intro">
-    <span class="eyebrow">How-to videos · For truck owners</span>
-    <h1>Everything your truck can do, in 8 short videos</h1>
-    <p>About 8 minutes in all. Watch them in order, or jump to the one you need.</p>
-    <nav class="chips" aria-label="Chapters">
+    <span class="eyebrow">How-to videos</span>
+    <h1>How to use Trukbite, in short videos</h1>
+    <p>Watch them in order, or jump to the one you need.</p>
+    <nav class="pick" aria-label="Sections">
+      <a href="#customers"><b>For customers</b><span>6 videos · about 9 minutes</span></a>
+      <a href="#owners"><b>For truck owners</b><span>8 videos · about 8 minutes</span></a>
+    </nav>
+  </section>
+
+  <section class="part" id="customers">
+    <span class="eyebrow">For customers</span>
+    <h2 class="parth">Find a truck, follow it, grab a bite</h2>
+    <nav class="chips" aria-label="Customer chapters">
+      <a href="#c1">1 · Find food</a><a href="#c2">2 · A truck's page</a><a href="#c3">3 · Follow &amp; alerts</a>
+      <a href="#c4">4 · Reviews</a><a href="#c5">5 · Lineup, parks &amp; events</a><a href="#c6">6 · Catering &amp; profile</a>
+    </nav>
+  </section>
+
+  <div class="list">
+    <article class="ch" id="c1">
+      <video src="../media/how-to/customer-ch1.mp4" poster="../media/how-to/customer-ch1.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 1 · 1:37</span><h2>Find food fast</h2>
+        <p>No account needed. What the map pins mean, the list of open trucks, search by truck, cuisine or dish, and filters.</p></div>
+    </article>
+    <article class="ch" id="c2">
+      <video src="../media/how-to/customer-ch2.mp4" poster="../media/how-to/customer-ch2.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 2 · 1:14</span><h2>A truck's page</h2>
+        <p>Where the truck is and until when, directions, today's special, the menu, this week's and next week's schedule, and reviews.</p></div>
+    </article>
+    <article class="ch" id="c3">
+      <video src="../media/how-to/customer-ch3.mp4" poster="../media/how-to/customer-ch3.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 3 · 1:41</span><h2>Follow trucks and choose your alerts</h2>
+        <ul><li>Follow, and get an alert the moment they pull up</li><li>All updates, When they open, or Off, truck by truck</li><li>Nearby only, morning reminder, quiet hours</li></ul></div>
+    </article>
+    <article class="ch" id="c4">
+      <video src="../media/how-to/customer-ch4.mp4" poster="../media/how-to/customer-ch4.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 4 · 1:07</span><h2>Reviews, photos and Rate it</h2>
+        <p>Write a review with photos, rate the dishes you ordered, quick Rate it on the menu, and Report or Block.</p></div>
+    </article>
+    <article class="ch" id="c5">
+      <video src="../media/how-to/customer-ch5.mp4" poster="../media/how-to/customer-ch5.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 5 · 1:09</span><h2>Today's lineup, truck parks and events</h2>
+        <p>Who's out today, area by area. Follow a truck park for tonight's lineup, and tap I'm going on events.</p></div>
+    </article>
+    <article class="ch" id="c6">
+      <video src="../media/how-to/customer-ch6.mp4" poster="../media/how-to/customer-ch6.jpg" controls preload="none" playsinline></video>
+      <div class="copy"><span class="meta">Chapter 6 · 1:47</span><h2>Catering, your profile and help</h2>
+        <p>Ask a truck to cater your event, your profile, blocked people, deleting your account, and Help &amp; feedback.</p></div>
+    </article>
+  </div>
+
+  <section class="part" id="owners">
+    <span class="eyebrow">For truck owners</span>
+    <h2 class="parth">Everything your truck can do, in 8 short videos</h2>
+    <nav class="chips" aria-label="Truck owner chapters">
       <a href="#ch1">1 · Welcome</a><a href="#ch2">2 · Sign up</a><a href="#ch3">3 · Open &amp; close</a><a href="#ch4">4 · Menu</a>
       <a href="#ch5">5 · Schedule</a><a href="#ch6">6 · Get customers</a><a href="#ch7">7 · Stats &amp; team</a><a href="#ch8">8 · Profile &amp; plan</a>
     </nav>
@@ -129,8 +187,8 @@
   </div>
 
   <section class="soon">
-    <h3>Videos for customers are coming soon</h3>
-    <p>Questions in the meantime? Email <a href="mailto:support@trukbite.com">support@trukbite.com</a>, or in the app go to Help &amp; feedback.</p>
+    <h3>Still have a question?</h3>
+    <p>Email <a href="mailto:support@trukbite.com">support@trukbite.com</a>, or in the app go to Help &amp; feedback.</p>
   </section>
 </main>
 
