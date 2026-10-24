@@ -855,7 +855,7 @@
       if (!v) { toast({ info: true, title: 'Type a special first', body: 'For example: "$2 off quesabirria until 8".' }); return; }
       o.special = v; render();
       toast({ title: 'Your Truck posted a special', body: v, id: 0 });
-      setTimeout(() => toast({ info: true, title: `Sent to ${o.followers} followers`, body: 'It also shows on your truck page for 24 hours. Specials are part of Pro.' }), 700);
+      setTimeout(() => toast({ info: true, title: 'Sent to followers who turned on specials', body: 'It also shows on your truck page for 24 hours. Specials are part of Pro.' }), 700);
     }
   });
   document.addEventListener('input', (e) => {
